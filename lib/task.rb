@@ -22,7 +22,7 @@ class Task
   end
 
   def save
-    DB.exec("INSERT INTO tasks (name, list_id) VALUES ('#{@name}', '#{@list_id}');")
+    DB.exec("INSERT INTO tasks (name, list_id, completed) VALUES ('#{@name}', '#{@list_id}', 'f');")
   end
 
   def self.find list_id
@@ -47,8 +47,8 @@ class Task
     tasks
   end
 
-  def self.unmarked
-    results = DB.exec("SELECT * FROM tasks WHERE completed != 't' and list_id = '#{list_id}';")
+  def self.unmarked list_id
+    results = DB.exec("SELECT * FROM tasks WHERE completed = 'f' AND list_id = '#{list_id}';")
     tasks = []
     results.each do |result|
       tasks << Task.new(result)

@@ -32,7 +32,7 @@ end
 def add_task id
   puts "Enter the name of the task."
   task_name = gets.chomp
-  new_task = Task.new(task_name, id)
+  new_task = Task.new({"name" => task_name, "list_id" => id})
   new_task.save
   puts "Task added.\n\n"
 end
@@ -60,10 +60,17 @@ end
 def target_list id
   system("clear")
   puts "#{List.find(id).name.upcase}\n\n"
-  puts "TASKS:"
+  puts "UNCOMPLETED TASKS:"
   puts "-----"
-  tasks = Task.find(id)
-  tasks.each_with_index do |task, index|
+  uncompleted_tasks = Task.unmarked(id)
+  binding.pry
+  uncompleted_tasks.each_with_index do |task, index|
+    puts "#{index}: #{task.name}"
+  end
+  puts "\n\nCOMPLETED TASKS"
+  puts "-----"
+  completed_tasks = Task.marked(id)
+  completed_tasks.each_with_index do |task, index|
     puts "#{index}: #{task.name}"
   end
   puts "Enter 'a' to add a task to this list.\nEnter 'd' to delete a task.\nEnter 'x' to return to the main menu.\n"

@@ -81,8 +81,28 @@ describe 'Task' do
       Task.mark('learn SQL')
       expect(Task.marked(1)[0].completed).to eq 't'
     end
+    it 'lets you mark a task as completed' do
+      task = Task.new({"name"=>'learn SQL',"list_id" => 1})
+      task2 = Task.new({"name"=>'learn SQB',"list_id" => 1})
+      task.save
+      task2.save
+      Task.mark('learn SQL')
+      expect(Task.marked(1).length).to eq 1
+      expect(Task.unmarked(1).length).to eq 1
+    end
+
   end
 end
+
+#   describe '.mark' do
+#     it 'lets you mark a task as completed' do
+#       task = Task.new({"name"=>'learn SQL',"list_id" => 1})
+#       task.save
+#       Task.mark('learn SQL')
+#       expect(Task.marked(1)[0].completed).to eq 't'
+#     end
+#   end
+# end
 
 describe List do
   it 'is initialized with a name' do
