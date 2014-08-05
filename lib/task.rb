@@ -1,10 +1,11 @@
 class Task
 
-  attr_accessor :name, :list_id
+  attr_accessor :name, :list_id, :completed
 
-  def initialize (name, list_id)
-    @name = name
-    @list_id = list_id
+  def initialize (attributes)
+    @name = attributes["name"]
+    @list_id = attributes["list_id"]
+    @completed = attributes["completed"]
   end
 
   def ==(another_task)
@@ -15,7 +16,7 @@ class Task
     results = DB.exec("SELECT * FROM tasks;")
     tasks = []
     results.each do |result|
-      tasks << Task.new(result['name'], result['list_id'])
+      tasks << Task.new(result)
     end
     tasks
   end
@@ -28,9 +29,31 @@ class Task
     results = DB.exec("SELECT * FROM tasks WHERE list_id = '#{list_id}';")
     tasks_found = []
     results.each do |task|
-      tasks_found << Task.new(task['name'], task['list_id'])
+      tasks_found << Task.new(task)
     end
     tasks_found
+  end
+
+  def self.mark name
+    DB.exec("UPDATE tasks SET completed = true WHERE name = '#{name}';")
+  end
+
+  def self.marked list_id
+    results = DB.exec("SELECT * FROM tasks WHERE completed = 't' AND list_id = '#{list_id}';")
+    tasks = []
+    results.each do |result|
+      tasks << Task.new(result)
+    end
+    tasks
+  end
+
+  def self.unmarked
+    results = DB.exec("SELECT * FROM tasks WHERE completed != 't' and list_id = '#{list_id}';")
+    tasks = []
+    results.each do |result|
+      tasks << Task.new(result)
+    end
+    tasks
   end
 
   def self.delete(name)

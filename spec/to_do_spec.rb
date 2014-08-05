@@ -2,6 +2,7 @@ require 'rspec'
 require 'task'
 require 'pg'
 require 'list'
+require 'pry'
 
 DB = PG.connect({:dbname => 'to_do_test'})
 
@@ -19,17 +20,17 @@ end
 
 describe 'Task' do
    it 'is initialized with a name and a list ID' do
-    task = Task.new('learn SQL', 1)
+    task = Task.new({"name"=>'learn SQL',"list_id" => 1})
     task.should be_an_instance_of Task
   end
 
   it 'tells you its name' do
-    task = Task.new('learn SQL', 1)
+    task = Task.new({"name"=>'learn SQL',"list_id" => 1})
     task.name.should eq 'learn SQL'
   end
 
   it 'tells you its list ID' do
-    task = Task.new('learn SQL', 1)
+    task = Task.new({"name"=>'learn SQL',"list_id" => 1})
     task.list_id.should eq 1
   end
 
@@ -38,7 +39,7 @@ describe 'Task' do
   end
 
   it 'lets you save tasks to the database' do
-    task = Task.new('learn SQL', 1)
+    task = Task.new({"name"=>'learn SQL',"list_id" => 1})
     task.save
     Task.all.should eq [task]
   end
@@ -46,16 +47,16 @@ describe 'Task' do
 
   describe ".delete" do
     it 'lets you delete a task' do
-      task = Task.new 'giggle club social hour', 5
+      task = Task.new({"name"=>'learn SQL',"list_id" => 1})
       task.save
-      Task.delete('giggle club social hour')
+      Task.delete('learn SQL')
       expect(Task.all).to eq []
     end
   end
 
   it 'is the same task if it has the same name and ID' do
-    task1 = Task.new('learn SQL', 1)
-    task2 = Task.new('learn SQL', 1)
+    task1 = Task.new({"name"=>'learn SQL',"list_id" => 1})
+    task2 = Task.new({"name"=>'learn SQL',"list_id" => 1})
     task1.should eq task2
   end
 
@@ -67,12 +68,20 @@ describe 'Task' do
 
   describe '.find' do
     it 'retrieves all tasks from its list_id' do
-      a_task = Task.new('Brownies', 2)
+      a_task = Task.new({"name"=>'learn SQL',"list_id" => 2})
       a_task.save
       expect(Task.find(2)).to eq [a_task]
     end
   end
 
+  describe '.mark' do
+    it 'lets you mark a task as completed' do
+      task = Task.new({"name"=>'learn SQL',"list_id" => 1})
+      task.save
+      Task.mark('learn SQL')
+      expect(Task.marked(1)[0].completed).to eq 't'
+    end
+  end
 end
 
 describe List do
@@ -125,7 +134,7 @@ describe List do
     it 'deletes a list and all associated tasks' do
       krazy_list = List.new({"name" => 'Heeeeeeeeeey'})
       list_id = krazy_list.save
-      k_task = Task.new('quite it!', list_id)
+      k_task = Task.new({"name" => 'quite it!', "list_id" => list_id})
       k_task.save
       List.delete(list_id)
       expect(List.all).to eq []
