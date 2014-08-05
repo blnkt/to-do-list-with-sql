@@ -32,7 +32,13 @@ end
 def add_task id
   puts "Enter the name of the task."
   task_name = gets.chomp
-  new_task = Task.new({"name" => task_name, "list_id" => id})
+  puts "Enter the due date for #{task_name} yyyy-mm-dd"
+  task_date = nil
+  loop do
+    task_date = gets.chomp
+    if
+  end
+  new_task = Task.new({"name" => task_name, "list_id" => id, "date" => task_date})
   new_task.save
   puts "Task added.\n\n"
 end
@@ -63,9 +69,8 @@ def target_list id
   puts "UNCOMPLETED TASKS:"
   puts "-----"
   uncompleted_tasks = Task.unmarked(id)
-  binding.pry
   uncompleted_tasks.each_with_index do |task, index|
-    puts "#{index}: #{task.name}"
+    puts "#{index}: #{task.name}          DUE: #{task.date}"
   end
   puts "\n\nCOMPLETED TASKS"
   puts "-----"
@@ -73,16 +78,33 @@ def target_list id
   completed_tasks.each_with_index do |task, index|
     puts "#{index}: #{task.name}"
   end
-  puts "Enter 'a' to add a task to this list.\nEnter 'd' to delete a task.\nEnter 'x' to return to the main menu.\n"
+  puts "\nEnter 'a' to add a task to this list.\nEnter 'd' to delete a task.\nEnter 'm' to mark a task as complete.\nEnter 'x' to return to the main menu.\n"
   input = gets.chomp
   case input
   when 'a'
     add_task id
   when 'd'
-    puts "enter a number to delete the cooresponding task."
+    puts "Enter 'c' to delete a completed task.  Enter 'u' to delete an uncompleted task"
+    input = gets.chomp
+    case input
+    when 'c'
+      puts "enter a number to delete the cooresponding task."
+      num = gets.chomp.to_i
+      task_name = completed_tasks[num].name
+      Task.delete(task_name)
+    when 'u'
+      puts "enter a number to mark the cooresponding task as completed."
+      num = gets.chomp.to_i
+      task_name = uncompleted_tasks[num].name
+      Task.mark(task_name)
+    else
+      target_list
+    end
+  when 'm'
+    puts "enter a number to mark the cooresponding task as completed."
     num = gets.chomp.to_i
-    task_name = tasks[num].name
-    Task.delete(task_name)
+    task_name = uncompleted_tasks[num].name
+    Task.mark(task_name)
   when 'x'
     main_menu
   end

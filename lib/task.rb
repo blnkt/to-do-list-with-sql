@@ -1,11 +1,12 @@
 class Task
 
-  attr_accessor :name, :list_id, :completed
+  attr_accessor :name, :list_id, :completed, :date
 
   def initialize (attributes)
     @name = attributes["name"]
     @list_id = attributes["list_id"]
     @completed = attributes["completed"]
+    @date = attributes["date"]
   end
 
   def ==(another_task)
@@ -22,7 +23,7 @@ class Task
   end
 
   def save
-    DB.exec("INSERT INTO tasks (name, list_id, completed) VALUES ('#{@name}', '#{@list_id}', 'f');")
+    DB.exec("INSERT INTO tasks (name, list_id, completed, date) VALUES ('#{@name}', '#{@list_id}', 'f', '#{@date}');")
   end
 
   def self.find list_id
@@ -48,7 +49,7 @@ class Task
   end
 
   def self.unmarked list_id
-    results = DB.exec("SELECT * FROM tasks WHERE completed = 'f' AND list_id = '#{list_id}';")
+    results = DB.exec("SELECT * FROM tasks WHERE completed = 'f' AND list_id = '#{list_id}' ORDER BY date;")
     tasks = []
     results.each do |result|
       tasks << Task.new(result)
@@ -56,8 +57,12 @@ class Task
     tasks
   end
 
+  # def self.sort_by_date
+  #   DB.exec("SELECT * FROM tasks ORDER BY completed = 'f' AND list_id = '#{list_id}';")
+
+  # end
+
   def self.delete(name)
     DB.exec("DELETE FROM tasks WHERE name = '#{name}';")
   end
-
 end
