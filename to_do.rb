@@ -8,9 +8,6 @@ DB = PG.connect({:dbname => 'to_do'})
 def main_menu
   system('clear')
   puts "Enter 'a' to add a new list.\nEnter 'l' to list active lists\nEnter 'x' to exit the program."
-  # if @lists.length > 0
-  #   puts "To view a list enter its cooresponding number."
-  # end
   main_choice = gets.chomp
   if main_choice == 'a'
     add_list
@@ -41,18 +38,28 @@ def add_task id
 end
 
 def show_lists
+  system('clear')
   lists = List.all
   lists.each do |list|
     puts "#{list.id}:  #{list.name}"
   end
-  puts "Enter list_id to view/edit your list."
+  puts "Enter list_id to view/edit a list.\nEnter 'd' to delete a list.\n Enter x to return to Main Menu"
   id = gets.chomp
-  target_list id
+  if id == 'd'
+    puts "Enter the list_id to delete the list"
+    list_id = gets.chomp
+    List.delete(list_id)
+    show_lists
+  elsif id.to_i > 0
+    target_list id
+  else
+    main_menu
+  end
 end
 
 def target_list id
   system("clear")
-  puts "#{List.find(id).name}\n\n"
+  puts "#{List.find(id).name.upcase}\n\n"
   puts "TASKS:"
   puts "-----"
   tasks = Task.find(id)
