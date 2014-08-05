@@ -32,4 +32,9 @@ class List
     new_list = List.new(result)
     new_list
   end
+
+  def self.delete id
+    DB.exec("DELETE FROM lists WHERE id = '#{id}';")
+    DB.exec("DELETE FROM tasks WHERE list_id = '#{id}';")
+  end
 end

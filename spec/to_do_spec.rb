@@ -43,11 +43,14 @@ describe 'Task' do
     Task.all.should eq [task]
   end
 
-  it 'lets you delete a task' do
-    task = Task.new 'giggle club social hour', 5
-    task.save
-    Task.delete('giggle club social hour')
-    expect(Task.all).to eq []
+
+  describe ".delete" do
+    it 'lets you delete a task' do
+      task = Task.new 'giggle club social hour', 5
+      task.save
+      Task.delete('giggle club social hour')
+      expect(Task.all).to eq []
+    end
   end
 
   it 'is the same task if it has the same name and ID' do
@@ -118,5 +121,16 @@ describe List do
     end
   end
 
+  describe '.delete' do
+    it 'deletes a list and all associated tasks' do
+      krazy_list = List.new({"name" => 'Heeeeeeeeeey'})
+      list_id = krazy_list.save
+      k_task = Task.new('quite it!', list_id)
+      k_task.save
+      List.delete(list_id)
+      expect(List.all).to eq []
+      expect(Task.all).to eq []
+    end
+  end
 
 end
