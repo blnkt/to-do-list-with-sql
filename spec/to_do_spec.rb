@@ -43,6 +43,13 @@ describe 'Task' do
     Task.all.should eq [task]
   end
 
+  it 'lets you delete a task' do
+    task = Task.new 'giggle club social hour', 5
+    task.save
+    task.delete('giggle club social hour')
+    expect(Task.all).to eq []
+  end
+
   it 'is the same task if it has the same name and ID' do
     task1 = Task.new('learn SQL', 1)
     task2 = Task.new('learn SQL', 1)

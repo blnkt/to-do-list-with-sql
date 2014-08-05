@@ -8,7 +8,7 @@ class Task
   end
 
   def ==(another_task)
-    self.name = another_task.name
+    self.name == another_task.name && self.list_id.to_i == another_task.list_id.to_i
   end
 
   def self.all
@@ -22,6 +22,10 @@ class Task
 
   def save
     DB.exec("INSERT INTO tasks (name, list_id) VALUES ('#{@name}', '#{@list_id}');")
+  end
+
+  def delete(name)
+    DB.exec("DELETE FROM tasks WHERE name = '#{name}';")
   end
 
 end

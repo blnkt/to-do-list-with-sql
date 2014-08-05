@@ -26,4 +26,5 @@ class List
     @id = results.first['id'].to_i
   end
 
+
 end
