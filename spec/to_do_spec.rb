@@ -46,7 +46,7 @@ describe 'Task' do
   it 'lets you delete a task' do
     task = Task.new 'giggle club social hour', 5
     task.save
-    task.delete('giggle club social hour')
+    Task.delete('giggle club social hour')
     expect(Task.all).to eq []
   end
 
@@ -62,6 +62,13 @@ describe 'Task' do
     end
   end
 
+  describe '.find' do
+    it 'retrieves all tasks from its list_id' do
+      a_task = Task.new('Brownies', 2)
+      a_task.save
+      expect(Task.find(2)).to eq [a_task]
+    end
+  end
 
 end
 
@@ -110,8 +117,6 @@ describe List do
       expect(List.find(list_id)).to eq list
     end
   end
-
-
 
 
 end

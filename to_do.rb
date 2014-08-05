@@ -6,6 +6,7 @@ require 'pry'
 DB = PG.connect({:dbname => 'to_do'})
 
 def main_menu
+  system('clear')
   puts "Enter 'a' to add a new list.\nEnter 'l' to list active lists\nEnter 'x' to exit the program."
   # if @lists.length > 0
   #   puts "To view a list enter its cooresponding number."
@@ -31,12 +32,13 @@ def add_list
   main_menu
 end
 
-# def add_new_task
-#   puts "Enter the name of the task."
-#   task_name = gets.chomp
-#   new_task = Task.new(task_name)
-#   puts "Task added.\n\n"
-# end
+def add_task id
+  puts "Enter the name of the task."
+  task_name = gets.chomp
+  new_task = Task.new(task_name, id)
+  new_task.save
+  puts "Task added.\n\n"
+end
 
 def show_lists
   lists = List.all
@@ -45,10 +47,32 @@ def show_lists
   end
   puts "Enter list_id to view/edit your list."
   id = gets.chomp
-  system("clear")
-  puts "#{List.find(id).name}\n"
-  puts "
+  target_list id
+end
 
+def target_list id
+  system("clear")
+  puts "#{List.find(id).name}\n\n"
+  puts "TASKS:"
+  puts "-----"
+  tasks = Task.find(id)
+  tasks.each_with_index do |task, index|
+    puts "#{index}: #{task.name}"
+  end
+  puts "Enter 'a' to add a task to this list.\nEnter 'd' to delete a task.\nEnter 'x' to return to the main menu.\n"
+  input = gets.chomp
+  case input
+  when 'a'
+    add_task id
+  when 'd'
+    puts "enter a number to delete the cooresponding task."
+    num = gets.chomp.to_i
+    task_name = tasks[num].name
+    Task.delete(task_name)
+  when 'x'
+    main_menu
+  end
+  target_list id
 end
 
  main_menu

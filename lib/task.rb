@@ -24,7 +24,16 @@ class Task
     DB.exec("INSERT INTO tasks (name, list_id) VALUES ('#{@name}', '#{@list_id}');")
   end
 
-  def delete(name)
+  def self.find list_id
+    results = DB.exec("SELECT * FROM tasks WHERE list_id = '#{list_id}';")
+    tasks_found = []
+    results.each do |task|
+      tasks_found << Task.new(task['name'], task['list_id'])
+    end
+    tasks_found
+  end
+
+  def self.delete(name)
     DB.exec("DELETE FROM tasks WHERE name = '#{name}';")
   end
 
